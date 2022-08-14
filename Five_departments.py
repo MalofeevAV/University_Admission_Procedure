@@ -26,12 +26,12 @@ def create_dict_with_applicants(list_of_applicants, max_num_of_students):
             department = applicant[3+i]
             if applicant not in enrolled_applicants:
                 if department not in dict_with_applicants:
-                    dict_with_applicants[department] = {" ".join(applicant[:2]): float(applicant[2])}
+                    dict_with_applicants[department] = [[" ".join(applicant[:2]), float(applicant[2])]]
                     enrolled_applicants.append(applicant)
                 else:
                     # For each department, choose the N best candidates
                     if len(dict_with_applicants[department]) < max_num_of_students:
-                        dict_with_applicants[department].update({" ".join(applicant[:2]) : float(applicant[2])})
+                        dict_with_applicants[department].append([" ".join(applicant[:2]), float(applicant[2])])
                         enrolled_applicants.append(applicant)
 
     return dict_with_applicants
@@ -41,8 +41,8 @@ def print_result(dict_with_applicants):
     """Print result(applicant, gpa) sorted by alphabetical order"""
     for department in sorted(dict_with_applicants):
         print(department)
-        for applicant in sorted(dict_with_applicants[department], key=dict_with_applicants[department].get, reverse=True):
-            print(applicant, dict_with_applicants[department][applicant])
+        for name, gpa in sorted(dict_with_applicants[department], key=lambda x: (-x[1], x[0])):
+            print(name, gpa)
         print()
 
 
