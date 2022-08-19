@@ -7,7 +7,7 @@ def read_from_file(filename):
 def write_to_file(path, department, applicants):
     """Write data to file - for each department creates their own file <department>.txt"""
     with open(f"{path}/{department}.txt", "w") as file:
-        for applicant in applicants:
+        for applicant in sorted(applicants, key=lambda x: (-float(x[2]), x[0])):
             file.write(" ".join(applicant) + "\n")
 
 
@@ -38,19 +38,20 @@ def sorted_applicants_by_department(list_of_applicants, index):
     return sorted(list_of_applicants, key=lambda x: (-float(x[index]), x[0], x[1]))
 
 
-def create_list_of_applicants_with_mean_score(list_of_applicants):
-    """Create list of applicants with mean score and priorities"""
-    return [applicant[:2] + [mean_score(applicant, departments[department]) for department in departments] + applicant[-amount_of_priorities:] for applicant in list_of_applicants]
+def create_list_of_applicants_with_mean_and_special_score(list_of_applicants):
+    """Create list of applicants with mean and special exam scores and priorities"""
+    return [applicant[:2] + [mean_score(applicant, departments[department]) for department in departments] + 
+                [float(applicant[special_exam_index])] + applicant[special_exam_index+1:] for applicant in list_of_applicants]
 
 
 def create_dict_with_applicants(list_of_applicants):
     """Create dict with department as a key and list of applicants as a value"""
     for i in range(amount_of_priorities):
-        department_index = -len(departments) - amount_of_priorities
+        department_index = 2
         for department in departments:
-            for applicant in sorted(list_of_applicants, key=lambda x: (-x[department_index], x[:2])):
+            for applicant in sorted(list_of_applicants, key=lambda x: (-x[department_index], -x[special_exam_index], x[:2])):
                 if applicant[-amount_of_priorities+i] == department and applicant not in enrolled_applicants and len(dict_with_applicants[department]) < max_num_of_students:
-                    dict_with_applicants[department].append(applicant[:2] + [str(applicant[department_index])])
+                    dict_with_applicants[department].append(applicant[:2] + [str(max(applicant[department_index], applicant[special_exam_index]))])
                     enrolled_applicants.append(applicant)
             department_index += 1
 
@@ -71,11 +72,12 @@ if __name__ == "__main__":
     departments = {"Physics": [2, 4], "Chemistry": [3], "Biotech": [2, 3], "Mathematics": [4], "Engineering": [4, 5]}
     dict_with_applicants = {dep: [] for dep in departments}
     amount_of_priorities = 3
+    special_exam_index = -amount_of_priorities - 1
 
     max_num_of_students = int(input())
 
     # list_of_applicants = read_from_file("Test_files/applicants3.txt")
-    list_of_applicants = read_from_file("Test_files/test1.txt")
+    list_of_applicants = read_from_file("Test_files/test2.txt")
 
-    dict_with_applicants = create_dict_with_applicants(create_list_of_applicants_with_mean_score(list_of_applicants))
+    dict_with_applicants = create_dict_with_applicants(create_list_of_applicants_with_mean_and_special_score(list_of_applicants))
     create_files(dict_with_applicants)

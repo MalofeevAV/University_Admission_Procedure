@@ -50,6 +50,6 @@ def print_result(dict_with_applicants):
 if __name__ == "__main__":
     max_num_of_students = int(input())
     # list_of_applicants = read_from_file("Test_files/applicants2.txt")
-    list_of_applicants = read_from_file("Test_files/test1")
+    list_of_applicants = read_from_file("Test_files/test1.txt")
     dict_with_applicants = create_dict_with_applicants(sorted_list_of_applicants(list_of_applicants), max_num_of_students)
     print_result(dict_with_applicants)
