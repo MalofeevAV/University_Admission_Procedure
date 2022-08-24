@@ -7,14 +7,14 @@ def read_from_file(filename):
 def write_to_file(path, department, applicants):
     """Write data to file - for each department creates their own file <department>.txt"""
     with open(f"{path}/{department}.txt", "w") as file:
-        for applicant in applicants:
+        for applicant in sorted(applicants, key=lambda x: (-float(x[2]), x[0])):
             file.write(" ".join(applicant) + "\n")
 
 
 def create_files(dict_with_applicants):
     """Create files with results - for each department creates their own file <department>.txt"""
     for department in dict_with_applicants:
-        write_to_file("Test_files", department, dict_with_applicants[department])
+        write_to_file(".", department, dict_with_applicants[department])
 
 
 def create_list_of_applicants(file):
@@ -74,8 +74,8 @@ if __name__ == "__main__":
 
     max_num_of_students = int(input())
 
-    # list_of_applicants = read_from_file("Test_files/applicants3.txt")
-    list_of_applicants = read_from_file("Test_files/test1.txt")
+    list_of_applicants = read_from_file("Test_files/applicants3.txt")
+    # list_of_applicants = read_from_file("Test_files/test1")
 
     dict_with_applicants = create_dict_with_applicants(create_list_of_applicants_with_mean_score(list_of_applicants))
     create_files(dict_with_applicants)
